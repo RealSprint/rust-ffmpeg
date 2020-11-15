@@ -1,4 +1,4 @@
-use std::ptr;
+use std::{ffi::c_void, ptr};
 
 use super::Delay;
 use ffi::*;
@@ -45,6 +45,7 @@ impl Context {
         dst_format: format::Sample,
         dst_channel_layout: ChannelLayout,
         dst_rate: u32,
+        async_setting: u32,
     ) -> Result<Self, Error> {
         Self::get_with(
             src_format,
@@ -89,6 +90,13 @@ impl Context {
             }
 
             if !ptr.is_null() {
+                av_opt_set_double(
+                    ptr as *mut c_void,
+                    "async".as_ptr() as *mut i8,
+                    async_setting as f64,
+                    0,
+                );
+
                 match swr_init(ptr) {
                     e if e < 0 => Err(Error::from(e)),
 
