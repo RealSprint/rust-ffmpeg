@@ -17,7 +17,6 @@ impl frame::Audio {
             format,
             channel_layout,
             rate,
-            0,
         )
     }
 }
@@ -37,7 +36,6 @@ impl decoder::Audio {
             format,
             channel_layout,
             rate,
-            0,
         )
     }
 }
