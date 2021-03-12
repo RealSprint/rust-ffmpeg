@@ -9,6 +9,8 @@ use ffi::*;
 use libc::{c_int, c_void};
 
 #[derive(Eq, PartialEq, Copy, Clone, Debug)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "snake_case"))]
 pub enum Sample {
     None,
 

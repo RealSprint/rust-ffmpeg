@@ -5,6 +5,8 @@ use ffi::AVColorPrimaries::*;
 use ffi::*;
 
 #[derive(Eq, PartialEq, Clone, Copy, Debug)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "snake_case"))]
 pub enum Primaries {
     Reserved0,
     BT709,
