@@ -217,6 +217,7 @@ where
 
 pub fn input_with_dictionary_and_interrupt<P: AsRef<Path>, F>(
     path: &P,
+    format: &str,
     options: Dictionary,
     closure: F,
 ) -> Result<context::Input, Error>
@@ -228,8 +229,9 @@ where
         let path = from_path(path);
         (*ps).interrupt_callback = interrupt::new(Box::new(closure)).interrupt;
 
+        let input_format = av_find_input_format(format.as_ptr() as *const i8);
         let mut opts = options.disown();
-        let res = avformat_open_input(&mut ps, path.as_ptr(), std::ptr::null_mut(), &mut opts);
+        let res = avformat_open_input(&mut ps, path.as_ptr(), input_format, &mut opts);
 
         Dictionary::own(opts);
 
