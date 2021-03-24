@@ -1,5 +1,5 @@
+use std::marker::PhantomData;
 use std::ptr;
-use std::{ffi::CString, marker::PhantomData};
 
 use device;
 use ffi::*;
@@ -20,51 +20,21 @@ pub struct DeviceIter<'a> {
     _marker: PhantomData<&'a ()>,
 }
 
+impl<'a> From<*mut AVDeviceInfoList> for DeviceIter<'a> {
+    fn from(ptr: *mut AVDeviceInfoList) -> Self {
+        DeviceIter {
+            ptr,
+            cur: 0,
+            _marker: PhantomData,
+        }
+    }
+}
+
 impl<'a> DeviceIter<'a> {
     pub unsafe fn wrap(ctx: *const AVFormatContext) -> Result<Self, Error> {
         let mut ptr: *mut AVDeviceInfoList = ptr::null_mut();
 
         match avdevice_list_devices(ctx as *mut _, &mut ptr) {
-            n if n < 0 => Err(Error::from(n)),
-
-            _ => Ok(DeviceIter {
-                ptr,
-                cur: 0,
-                _marker: PhantomData,
-            }),
-        }
-    }
-
-    pub unsafe fn sources(device_name: &str) -> Result<Self, Error> {
-        let mut ptr: *mut AVDeviceInfoList = ptr::null_mut();
-        let string = CString::new(device_name).map_err(|_| Error::InvalidData)?;
-
-        match avdevice_list_input_sources(
-            ptr::null_mut(),
-            string.as_ptr(),
-            ptr::null_mut(),
-            &mut ptr,
-        ) {
-            n if n < 0 => Err(Error::from(n)),
-
-            _ => Ok(DeviceIter {
-                ptr,
-                cur: 0,
-                _marker: PhantomData,
-            }),
-        }
-    }
-
-    pub unsafe fn sinks(device_name: &str) -> Result<Self, Error> {
-        let mut ptr: *mut AVDeviceInfoList = ptr::null_mut();
-        let string = CString::new(device_name).map_err(|_| Error::InvalidData)?;
-
-        match avdevice_list_output_sinks(
-            ptr::null_mut(),
-            string.as_ptr(),
-            ptr::null_mut(),
-            &mut ptr,
-        ) {
             n if n < 0 => Err(Error::from(n)),
 
             _ => Ok(DeviceIter {
