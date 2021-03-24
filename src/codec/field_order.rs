@@ -3,7 +3,7 @@ use ffi::*;
 
 #[derive(Eq, PartialEq, Clone, Copy, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "snake_case"))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 pub enum FieldOrder {
     Unknown,
     Progressive,

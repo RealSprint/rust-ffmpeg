@@ -7,7 +7,7 @@ use libc::c_int;
 
 #[derive(Copy, Clone)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "snake_case"))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 pub struct Rational(pub i32, pub i32);
 
 impl Rational {
