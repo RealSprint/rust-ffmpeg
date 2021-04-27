@@ -1,5 +1,9 @@
-use std::rc::Rc;
-use std::{ffi::CString, ptr};
+use std::{
+    ffi::{CStr, CString},
+    ptr,
+    str::from_utf8_unchecked,
+};
+use std::{fmt, rc::Rc};
 
 use ffi::*;
 
@@ -67,6 +71,16 @@ impl Context {
         unsafe {
             av_bsf_flush(self.as_mut_ptr());
         }
+    }
+
+    pub fn name(&self) -> &str {
+        unsafe { from_utf8_unchecked(CStr::from_ptr((*(*self.as_ptr()).filter).name).to_bytes()) }
+    }
+}
+
+impl fmt::Debug for Context {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(self.name())
     }
 }
 
