@@ -7,7 +7,7 @@ use std::{fmt, rc::Rc};
 
 use ffi::*;
 
-use crate::{packet, Stream};
+use crate::{codec::Parameters, packet};
 use Error;
 
 pub struct Context {
@@ -28,7 +28,7 @@ impl Context {
 }
 
 impl Context {
-    pub fn new(filter: &str, stream: &Stream) -> Result<Self, Error> {
+    pub fn new(filter: &str, parameters: &Parameters) -> Result<Self, Error> {
         unsafe {
             let filter = CString::new(filter).unwrap();
             let mut ptr: *mut AVBSFContext = ptr::null_mut();
@@ -45,7 +45,7 @@ impl Context {
                 return Err(Error::Other { errno: result });
             }
 
-            let result = avcodec_parameters_copy((*ptr).par_in, stream.parameters().as_ptr());
+            let result = avcodec_parameters_copy((*ptr).par_in, parameters.as_ptr());
 
             if result < 0 {
                 return Err(Error::Other { errno: result });
