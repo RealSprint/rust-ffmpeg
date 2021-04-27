@@ -1,0 +1,81 @@
+use std::rc::Rc;
+use std::{ffi::CString, ptr};
+
+use ffi::*;
+
+use crate::packet;
+use Error;
+
+pub struct Context {
+    ptr: *mut AVBSFContext,
+    owner: Option<Rc<dyn Drop>>,
+}
+
+unsafe impl Send for Context {}
+
+impl Context {
+    pub unsafe fn as_ptr(&self) -> *const AVBSFContext {
+        self.ptr as *const _
+    }
+
+    pub unsafe fn as_mut_ptr(&mut self) -> *mut AVBSFContext {
+        self.ptr
+    }
+}
+
+impl Context {
+    pub fn new(filter: &str) -> Result<Self, Error> {
+        unsafe {
+            let filter = CString::new(filter).unwrap();
+            let mut ptr: *mut AVBSFContext = ptr::null_mut();
+            let ptr_ptr = &mut ptr as *mut *mut AVBSFContext;
+            let filter = av_bsf_get_by_name(filter.as_ptr());
+
+            if filter.is_null() {
+                return Err(Error::BsfNotFound);
+            }
+
+            let result = av_bsf_alloc(filter, ptr_ptr);
+
+            if result == 0 {
+                return Ok(Context { ptr, owner: None });
+            }
+
+            Err(Error::Other { errno: result })
+        }
+    }
+
+    pub fn send_packet<P: packet::Mut>(&mut self, mut packet: P) -> Result<(), Error> {
+        unsafe {
+            match av_bsf_send_packet(self.as_mut_ptr(), packet.as_mut_ptr()) {
+                e if e < 0 => Err(Error::from(e)),
+                _ => Ok(()),
+            }
+        }
+    }
+
+    pub fn receive_packet<P: packet::Mut>(&mut self, packet: &mut P) -> Result<(), Error> {
+        unsafe {
+            match av_bsf_receive_packet(self.as_mut_ptr(), packet.as_mut_ptr()) {
+                e if e < 0 => Err(Error::from(e)),
+                _ => Ok(()),
+            }
+        }
+    }
+
+    pub fn flush(&mut self) {
+        unsafe {
+            av_bsf_flush(self.as_mut_ptr());
+        }
+    }
+}
+
+impl Drop for Context {
+    fn drop(&mut self) {
+        unsafe {
+            if self.owner.is_none() {
+                av_bsf_free(&mut self.as_mut_ptr());
+            }
+        }
+    }
+}
