@@ -55,6 +55,14 @@ impl Context {
         }
     }
 
+    pub fn parameters_out(&self) -> Parameters {
+        let mut parameters = Parameters::new();
+        unsafe {
+            avcodec_parameters_copy(parameters.as_mut_ptr(), (*self.as_ptr()).par_out);
+        }
+        parameters
+    }
+
     pub fn send_packet<P: packet::Mut>(&mut self, mut packet: P) -> Result<(), Error> {
         unsafe {
             match av_bsf_send_packet(self.as_mut_ptr(), packet.as_mut_ptr()) {
