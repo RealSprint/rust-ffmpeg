@@ -51,6 +51,12 @@ impl Context {
                 return Err(Error::Other { errno: result });
             }
 
+            let result = av_bsf_init(ptr);
+
+            if result < 0 {
+                return Err(Error::Other { errno: result });
+            }
+
             Ok(Context { ptr, owner: None })
         }
     }
