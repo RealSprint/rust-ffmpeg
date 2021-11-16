@@ -311,6 +311,14 @@ impl Video {
             )
         }
     }
+
+    #[inline]
+    pub fn deep_copy(&mut self, source: &Self) {
+        unsafe {
+            av_frame_copy(self.as_mut_ptr(), source.as_ptr());
+            av_frame_copy_props(self.as_mut_ptr(), source.as_ptr());
+        }
+    }
 }
 
 impl Deref for Video {
@@ -332,10 +340,7 @@ impl DerefMut for Video {
 impl Clone for Video {
     #[inline]
     fn clone(&self) -> Self {
-        let mut cloned = Video::new(self.format(), self.width(), self.height());
-        cloned.clone_from(self);
-
-        cloned
+        unsafe { Video::wrap(crate::sys::av_frame_clone(self.as_ptr())) }
     }
 
     #[inline]
