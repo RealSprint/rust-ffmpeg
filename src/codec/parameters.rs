@@ -5,6 +5,8 @@ use std::{
     slice,
 };
 
+use std::any::Any;
+
 use crate::{format, Error};
 
 use super::{Context, Id, Profile};
@@ -14,13 +16,13 @@ use ChannelLayout;
 
 pub struct Parameters {
     ptr: *mut AVCodecParameters,
-    owner: Option<Rc<dyn Drop>>,
+    owner: Option<Rc<dyn Any>>,
 }
 
 unsafe impl Send for Parameters {}
 
 impl Parameters {
-    pub unsafe fn wrap(ptr: *mut AVCodecParameters, owner: Option<Rc<dyn Drop>>) -> Self {
+    pub unsafe fn wrap(ptr: *mut AVCodecParameters, owner: Option<Rc<dyn Any>>) -> Self {
         Parameters { ptr, owner }
     }
 
