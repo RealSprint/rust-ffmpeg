@@ -43,6 +43,15 @@ pub enum Type {
 
     #[cfg(feature = "ffmpeg_4_3")]
     VIDEO_ENC_PARAMS,
+
+    #[cfg(feature = "ni")]
+    NETINT_UDU_SEI,
+    #[cfg(feature = "ni")]
+    NETINT_CUSTOM_SEI,
+    #[cfg(feature = "ni")]
+    NETINT_BITRATE,
+    #[cfg(feature = "ni")]
+    NETINT_LONG_TERM_REF,
 }
 
 impl Type {
@@ -91,6 +100,15 @@ impl From<AVFrameSideDataType> for Type {
 
             #[cfg(feature = "ffmpeg_4_3")]
             AV_FRAME_DATA_VIDEO_ENC_PARAMS => Type::VIDEO_ENC_PARAMS,
+
+            #[cfg(feature = "ni")]
+            AV_FRAME_DATA_NETINT_UDU_SEI => Type::NETINT_UDU_SEI,
+            #[cfg(feature = "ni")]
+            AV_FRAME_DATA_NETINT_CUSTOM_SEI => Type::NETINT_CUSTOM_SEI,
+            #[cfg(feature = "ni")]
+            AV_FRAME_DATA_NETINT_BITRATE => Type::NETINT_BITRATE,
+            #[cfg(feature = "ni")]
+            AV_FRAME_DATA_NETINT_LONG_TERM_REF => Type::NETINT_LONG_TERM_REF,
         }
     }
 }
@@ -132,6 +150,15 @@ impl Into<AVFrameSideDataType> for Type {
 
             #[cfg(feature = "ffmpeg_4_3")]
             Type::VIDEO_ENC_PARAMS => AV_FRAME_DATA_VIDEO_ENC_PARAMS,
+
+            #[cfg(feature = "ni")]
+            Type::NETINT_UDU_SEI => AV_FRAME_DATA_NETINT_UDU_SEI,
+            #[cfg(feature = "ni")]
+            Type::NETINT_CUSTOM_SEI => AV_FRAME_DATA_NETINT_CUSTOM_SEI,
+            #[cfg(feature = "ni")]
+            Type::NETINT_BITRATE => AV_FRAME_DATA_NETINT_BITRATE,
+            #[cfg(feature = "ni")]
+            Type::NETINT_LONG_TERM_REF => AV_FRAME_DATA_NETINT_LONG_TERM_REF,
         }
     }
 }
