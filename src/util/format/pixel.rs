@@ -355,6 +355,11 @@ pub enum Pixel {
     RPI4_8,
     #[cfg(feature = "rpi")]
     RPI4_10,
+
+    #[cfg(feature = "ni")]
+    NI_QUAD,
+    #[cfg(feature = "ni")]
+    BGRP,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -689,6 +694,11 @@ impl From<AVPixelFormat> for Pixel {
             AV_PIX_FMT_RPI4_8 => Pixel::RPI4_8,
             #[cfg(feature = "rpi")]
             AV_PIX_FMT_RPI4_10 => Pixel::RPI4_10,
+
+            #[cfg(feature = "ni")]
+            AV_PIX_FMT_NI_QUAD => Pixel::NI_QUAD,
+            #[cfg(feature = "ni")]
+            AV_PIX_FMT_BGRP => Pixel::BGRP,
         }
     }
 }
@@ -1043,6 +1053,11 @@ impl Into<AVPixelFormat> for Pixel {
             Pixel::RPI4_8 => AV_PIX_FMT_RPI4_8,
             #[cfg(feature = "rpi")]
             Pixel::RPI4_10 => AV_PIX_FMT_RPI4_10,
+
+            #[cfg(feature = "ni")]
+            Pixel::NI_QUAD => AV_PIX_FMT_NI_QUAD,
+            #[cfg(feature = "ni")]
+            Pixel::BGRP => AV_PIX_FMT_BGRP,
         }
     }
 }
