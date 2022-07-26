@@ -1,3 +1,4 @@
+use std::fmt::Debug;
 use std::marker::PhantomData;
 use std::mem;
 use std::slice;
@@ -266,6 +267,18 @@ impl Clone for Packet {
         unsafe {
             av_copy_packet(&mut self.0, &source.0);
         }
+    }
+}
+
+impl Debug for Packet {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Packet")
+            .field("is_key", &self.is_key())
+            .field("size", &self.size())
+            .field("stream", &self.stream())
+            .field("dts", &self.dts())
+            .field("pts", &self.pts())
+            .finish()
     }
 }
 
