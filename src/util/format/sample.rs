@@ -1,4 +1,5 @@
 use std::ffi::{CStr, CString};
+use std::fmt::{self, Display};
 use std::ops::Index;
 use std::ptr;
 use std::slice;
@@ -102,6 +103,14 @@ impl From<&'static str> for Sample {
 
             Sample::from(av_get_sample_fmt(value.as_ptr()))
         }
+    }
+}
+
+impl Display for Sample {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let name = unsafe { ffmpeg_sys_next::av_get_sample_fmt_name((*self).into()) };
+        let name = unsafe { from_utf8_unchecked(CStr::from_ptr(name).to_bytes()) };
+        write!(f, "{}", name)
     }
 }
 
