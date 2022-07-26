@@ -6,6 +6,7 @@ use std::str::{from_utf8_unchecked, FromStr};
 use ffi::AVPixelFormat::*;
 use ffi::*;
 
+#[cfg_attr(feature = "serde_with", serde_as(as = "DisplayFromStr"))]
 #[derive(Eq, PartialEq, Copy, Clone, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
