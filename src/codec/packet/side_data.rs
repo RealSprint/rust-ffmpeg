@@ -1,4 +1,5 @@
 use std::marker::PhantomData;
+use std::mem::transmute;
 use std::slice;
 
 use super::Packet;
@@ -48,6 +49,8 @@ pub enum Type {
     ICC_PROFILE,
     #[cfg(feature = "ffmpeg_4_3")]
     DOVI_CONF,
+
+    OTHER(i32),
 }
 
 impl From<AVPacketSideDataType> for Type {
@@ -94,6 +97,8 @@ impl From<AVPacketSideDataType> for Type {
             AV_PKT_DATA_ICC_PROFILE => Type::ICC_PROFILE,
             #[cfg(feature = "ffmpeg_4_3")]
             AV_PKT_DATA_DOVI_CONF => Type::DOVI_CONF,
+
+            value => Type::OTHER(value as i32),
         }
     }
 }
@@ -142,6 +147,8 @@ impl Into<AVPacketSideDataType> for Type {
             Type::ICC_PROFILE => AV_PKT_DATA_ICC_PROFILE,
             #[cfg(feature = "ffmpeg_4_3")]
             Type::DOVI_CONF => AV_PKT_DATA_DOVI_CONF,
+
+            Type::OTHER(value) => unsafe { transmute(value) },
         }
     }
 }
