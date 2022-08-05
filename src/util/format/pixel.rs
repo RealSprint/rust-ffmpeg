@@ -1,6 +1,7 @@
 use std::error;
 use std::ffi::{CStr, CString, NulError};
 use std::fmt::{self, Display};
+use std::mem::transmute;
 use std::str::{from_utf8_unchecked, FromStr};
 
 use ffi::AVPixelFormat::*;
@@ -361,6 +362,8 @@ pub enum Pixel {
     NI_QUAD,
     #[cfg(feature = "ni")]
     BGRP,
+
+    OTHER(i32),
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -700,6 +703,8 @@ impl From<AVPixelFormat> for Pixel {
             AV_PIX_FMT_NI_QUAD => Pixel::NI_QUAD,
             #[cfg(feature = "ni")]
             AV_PIX_FMT_BGRP => Pixel::BGRP,
+
+            value => Pixel::OTHER(value as i32),
         }
     }
 }
@@ -1059,6 +1064,8 @@ impl Into<AVPixelFormat> for Pixel {
             Pixel::NI_QUAD => AV_PIX_FMT_NI_QUAD,
             #[cfg(feature = "ni")]
             Pixel::BGRP => AV_PIX_FMT_BGRP,
+
+            Pixel::OTHER(value) => unsafe { transmute(value) },
         }
     }
 }

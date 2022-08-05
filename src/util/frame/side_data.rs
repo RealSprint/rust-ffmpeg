@@ -1,5 +1,6 @@
 use std::ffi::CStr;
 use std::marker::PhantomData;
+use std::mem::transmute;
 use std::slice;
 use std::str::from_utf8_unchecked;
 
@@ -52,6 +53,8 @@ pub enum Type {
     NETINT_BITRATE,
     #[cfg(feature = "ni")]
     NETINT_LONG_TERM_REF,
+
+    OTHER(i32),
 }
 
 impl Type {
@@ -109,14 +112,16 @@ impl From<AVFrameSideDataType> for Type {
             AV_FRAME_DATA_NETINT_BITRATE => Type::NETINT_BITRATE,
             #[cfg(feature = "ni")]
             AV_FRAME_DATA_NETINT_LONG_TERM_REF => Type::NETINT_LONG_TERM_REF,
+
+            value => Type::OTHER(value as i32),
         }
     }
 }
 
-impl Into<AVFrameSideDataType> for Type {
+impl From<Type> for AVFrameSideDataType {
     #[inline(always)]
-    fn into(self) -> AVFrameSideDataType {
-        match self {
+    fn from(val: Type) -> Self {
+        match val {
             Type::PanScan => AV_FRAME_DATA_PANSCAN,
             Type::A53CC => AV_FRAME_DATA_A53_CC,
             Type::Stereo3D => AV_FRAME_DATA_STEREO3D,
@@ -159,6 +164,8 @@ impl Into<AVFrameSideDataType> for Type {
             Type::NETINT_BITRATE => AV_FRAME_DATA_NETINT_BITRATE,
             #[cfg(feature = "ni")]
             Type::NETINT_LONG_TERM_REF => AV_FRAME_DATA_NETINT_LONG_TERM_REF,
+
+            Type::OTHER(value) => unsafe { transmute(value) },
         }
     }
 }
