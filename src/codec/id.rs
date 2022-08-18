@@ -1,5 +1,8 @@
-use std::ffi::CStr;
-use std::str::from_utf8_unchecked;
+use std::error;
+use std::ffi::{CStr, CString, NulError};
+use std::fmt::{self, Display};
+use std::mem::transmute;
+use std::str::{from_utf8_unchecked, FromStr};
 
 use ffi::AVCodecID::*;
 use ffi::*;
@@ -569,7 +572,7 @@ pub enum Id {
     #[cfg(feature = "ffmpeg_4_3")]
     EPG,
 
-    OTHER(AVCodecID),
+    OTHER(i32),
 }
 
 impl Id {
@@ -1144,7 +1147,7 @@ impl From<AVCodecID> for Id {
             #[cfg(feature = "ffmpeg_4_3")]
             AV_CODEC_ID_EPG => Id::EPG,
 
-            value => Id::OTHER(value),
+            value => Id::OTHER(value as i32),
         }
     }
 }
@@ -1711,7 +1714,63 @@ impl Into<AVCodecID> for Id {
             #[cfg(feature = "ffmpeg_4_3")]
             Id::EPG => AV_CODEC_ID_EPG,
 
-            Id::OTHER(id) => id,
+            Id::OTHER(value) => unsafe { transmute(value) },
         }
+    }
+}
+
+#[derive(Debug)]
+pub enum ParseIdError {
+    NulError(NulError),
+    UnknownId,
+}
+
+impl fmt::Display for ParseIdError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            ParseIdError::NulError(ref e) => e.fmt(f),
+            ParseIdError::UnknownId => write!(f, "unknown codec id"),
+        }
+    }
+}
+
+impl error::Error for ParseIdError {
+    fn cause(&self) -> Option<&dyn error::Error> {
+        match *self {
+            ParseIdError::NulError(ref e) => Some(e),
+            ParseIdError::UnknownId => None,
+        }
+    }
+}
+
+impl From<NulError> for ParseIdError {
+    fn from(x: NulError) -> ParseIdError {
+        ParseIdError::NulError(x)
+    }
+}
+
+impl FromStr for Id {
+    type Err = ParseIdError;
+
+    #[inline(always)]
+    fn from_str(s: &str) -> Result<Id, ParseIdError> {
+        let cstring = CString::new(s)?;
+
+        let descriptor =
+            unsafe { ffmpeg_sys_next::avcodec_descriptor_get_by_name(cstring.as_ptr()) };
+
+        if descriptor.is_null() {
+            Err(ParseIdError::UnknownId)
+        } else {
+            Ok(unsafe { (*descriptor).id.into() })
+        }
+    }
+}
+
+impl Display for Id {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let name = unsafe { ffmpeg_sys_next::avcodec_get_name((*self).into()) };
+        let name = unsafe { from_utf8_unchecked(CStr::from_ptr(name).to_bytes()) };
+        write!(f, "{}", name)
     }
 }

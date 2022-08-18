@@ -9,7 +9,6 @@ use ffi::AVSampleFormat::*;
 use ffi::*;
 use libc::{c_int, c_void};
 
-#[cfg_attr(feature = "serde_with", serde_as(as = "DisplayFromStr"))]
 #[derive(Eq, PartialEq, Copy, Clone, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
