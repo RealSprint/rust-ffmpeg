@@ -568,6 +568,8 @@ pub enum Id {
     HCA,
     #[cfg(feature = "ffmpeg_4_3")]
     EPG,
+
+    OTHER(AVCodecID),
 }
 
 impl Id {
@@ -1141,6 +1143,8 @@ impl From<AVCodecID> for Id {
             AV_CODEC_ID_HCA => Id::HCA,
             #[cfg(feature = "ffmpeg_4_3")]
             AV_CODEC_ID_EPG => Id::EPG,
+
+            value => Id::OTHER(value),
         }
     }
 }
@@ -1706,6 +1710,8 @@ impl Into<AVCodecID> for Id {
             Id::HCA => AV_CODEC_ID_HCA,
             #[cfg(feature = "ffmpeg_4_3")]
             Id::EPG => AV_CODEC_ID_EPG,
+
+            Id::OTHER(id) => id,
         }
     }
 }
