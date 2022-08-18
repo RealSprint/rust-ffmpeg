@@ -51,13 +51,15 @@ impl From<AVOptionType> for Type {
             AV_OPT_TYPE_DURATION => Type::Duration,
             AV_OPT_TYPE_COLOR => Type::Color,
             AV_OPT_TYPE_CHANNEL_LAYOUT => Type::ChannelLayout,
+            #[cfg(feature = "ffmpeg_5_1")]
+            AV_OPT_TYPE_CHLAYOUT => Type::ChannelLayout,
         }
     }
 }
 
-impl Into<AVOptionType> for Type {
-    fn into(self) -> AVOptionType {
-        match self {
+impl From<Type> for AVOptionType {
+    fn from(value: Type) -> AVOptionType {
+        match value {
             Type::Flags => AV_OPT_TYPE_FLAGS,
             Type::Int => AV_OPT_TYPE_INT,
             Type::Int64 => AV_OPT_TYPE_INT64,

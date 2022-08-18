@@ -29,9 +29,9 @@ pub enum Type {
     ContentLightLevel,
     IccProfile,
 
-    #[cfg(feature = "ffmpeg_4_0")]
+    #[cfg(all(feature = "ffmpeg_4_0", not(feature = "ffmpeg_5_0")))]
     QPTableProperties,
-    #[cfg(feature = "ffmpeg_4_0")]
+    #[cfg(all(feature = "ffmpeg_4_0", not(feature = "ffmpeg_5_0")))]
     QPTableData,
 
     #[cfg(feature = "ffmpeg_4_1")]
@@ -44,6 +44,21 @@ pub enum Type {
 
     #[cfg(feature = "ffmpeg_4_3")]
     VIDEO_ENC_PARAMS,
+
+    #[cfg(feature = "ffmpeg_4_4")]
+    SEI_UNREGISTERED,
+    #[cfg(feature = "ffmpeg_4_4")]
+    FILM_GRAIN_PARAMS,
+
+    #[cfg(feature = "ffmpeg_5_0")]
+    DETECTION_BBOXES,
+    #[cfg(feature = "ffmpeg_5_0")]
+    DOVI_RPU_BUFFER,
+    #[cfg(feature = "ffmpeg_5_0")]
+    DOVI_METADATA,
+
+    #[cfg(feature = "ffmpeg_5_1")]
+    DYNAMIC_HDR_VIVID,
 
     #[cfg(feature = "ni")]
     NETINT_UDU_SEI,
@@ -88,11 +103,10 @@ impl From<AVFrameSideDataType> for Type {
             AV_FRAME_DATA_CONTENT_LIGHT_LEVEL => Type::ContentLightLevel,
             AV_FRAME_DATA_ICC_PROFILE => Type::IccProfile,
 
-            #[cfg(feature = "ffmpeg_4_0")]
+            #[cfg(all(feature = "ffmpeg_4_0", not(feature = "ffmpeg_5_0")))]
             AV_FRAME_DATA_QP_TABLE_PROPERTIES => Type::QPTableProperties,
-            #[cfg(feature = "ffmpeg_4_0")]
+            #[cfg(all(feature = "ffmpeg_4_0", not(feature = "ffmpeg_5_0")))]
             AV_FRAME_DATA_QP_TABLE_DATA => Type::QPTableData,
-
             #[cfg(feature = "ffmpeg_4_1")]
             AV_FRAME_DATA_S12M_TIMECODE => Type::S12M_TIMECODE,
 
@@ -103,6 +117,21 @@ impl From<AVFrameSideDataType> for Type {
 
             #[cfg(feature = "ffmpeg_4_3")]
             AV_FRAME_DATA_VIDEO_ENC_PARAMS => Type::VIDEO_ENC_PARAMS,
+
+            #[cfg(feature = "ffmpeg_4_4")]
+            AV_FRAME_DATA_SEI_UNREGISTERED => Type::SEI_UNREGISTERED,
+            #[cfg(feature = "ffmpeg_4_4")]
+            AV_FRAME_DATA_FILM_GRAIN_PARAMS => Type::FILM_GRAIN_PARAMS,
+
+            #[cfg(feature = "ffmpeg_5_0")]
+            AV_FRAME_DATA_DETECTION_BBOXES => Type::DETECTION_BBOXES,
+            #[cfg(feature = "ffmpeg_5_0")]
+            AV_FRAME_DATA_DOVI_RPU_BUFFER => Type::DOVI_RPU_BUFFER,
+            #[cfg(feature = "ffmpeg_5_0")]
+            AV_FRAME_DATA_DOVI_METADATA => Type::DOVI_METADATA,
+
+            #[cfg(feature = "ffmpeg_5_1")]
+            AV_FRAME_DATA_DYNAMIC_HDR_VIVID => Type::DYNAMIC_HDR_VIVID,
 
             #[cfg(feature = "ni")]
             AV_FRAME_DATA_NETINT_UDU_SEI => Type::NETINT_UDU_SEI,
@@ -140,11 +169,10 @@ impl From<Type> for AVFrameSideDataType {
             Type::ContentLightLevel => AV_FRAME_DATA_CONTENT_LIGHT_LEVEL,
             Type::IccProfile => AV_FRAME_DATA_ICC_PROFILE,
 
-            #[cfg(feature = "ffmpeg_4_0")]
+            #[cfg(all(feature = "ffmpeg_4_0", not(feature = "ffmpeg_5_0")))]
             Type::QPTableProperties => AV_FRAME_DATA_QP_TABLE_PROPERTIES,
-            #[cfg(feature = "ffmpeg_4_0")]
+            #[cfg(all(feature = "ffmpeg_4_0", not(feature = "ffmpeg_5_0")))]
             Type::QPTableData => AV_FRAME_DATA_QP_TABLE_DATA,
-
             #[cfg(feature = "ffmpeg_4_1")]
             Type::S12M_TIMECODE => AV_FRAME_DATA_S12M_TIMECODE,
 
@@ -155,6 +183,21 @@ impl From<Type> for AVFrameSideDataType {
 
             #[cfg(feature = "ffmpeg_4_3")]
             Type::VIDEO_ENC_PARAMS => AV_FRAME_DATA_VIDEO_ENC_PARAMS,
+
+            #[cfg(feature = "ffmpeg_4_4")]
+            Type::SEI_UNREGISTERED => AV_FRAME_DATA_SEI_UNREGISTERED,
+            #[cfg(feature = "ffmpeg_4_4")]
+            Type::FILM_GRAIN_PARAMS => AV_FRAME_DATA_FILM_GRAIN_PARAMS,
+
+            #[cfg(feature = "ffmpeg_5_0")]
+            Type::DETECTION_BBOXES => AV_FRAME_DATA_DETECTION_BBOXES,
+            #[cfg(feature = "ffmpeg_5_0")]
+            Type::DOVI_RPU_BUFFER => AV_FRAME_DATA_DOVI_RPU_BUFFER,
+            #[cfg(feature = "ffmpeg_5_0")]
+            Type::DOVI_METADATA => AV_FRAME_DATA_DOVI_METADATA,
+
+            #[cfg(feature = "ffmpeg_5_1")]
+            Type::DYNAMIC_HDR_VIVID => AV_FRAME_DATA_DYNAMIC_HDR_VIVID,
 
             #[cfg(feature = "ni")]
             Type::NETINT_UDU_SEI => AV_FRAME_DATA_NETINT_UDU_SEI,

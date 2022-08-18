@@ -1,4 +1,5 @@
 use std::{
+    any::Any,
     mem,
     ops::{Deref, DerefMut},
     rc::Rc,
@@ -14,13 +15,13 @@ use ChannelLayout;
 
 pub struct Parameters {
     ptr: *mut AVCodecParameters,
-    owner: Option<Rc<dyn Drop>>,
+    owner: Option<Rc<dyn Any>>,
 }
 
 unsafe impl Send for Parameters {}
 
 impl Parameters {
-    pub unsafe fn wrap(ptr: *mut AVCodecParameters, owner: Option<Rc<dyn Drop>>) -> Self {
+    pub unsafe fn wrap(ptr: *mut AVCodecParameters, owner: Option<Rc<dyn Any>>) -> Self {
         Parameters { ptr, owner }
     }
 
