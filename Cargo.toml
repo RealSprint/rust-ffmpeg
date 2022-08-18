@@ -124,7 +124,8 @@ version = "0.23"
 optional = true
 
 [dependencies.ffmpeg-sys-next]
-version = "5.1.1"
+git = "https://github.com/RealSprint/rust-ffmpeg-sys.git"
+rev = "114a0959b15e950bb3cbba29634b135ce6ede737"
 default-features = false
 
 [dependencies.serde]
