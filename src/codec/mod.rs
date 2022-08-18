@@ -48,8 +48,6 @@ pub mod decoder;
 pub mod encoder;
 pub mod traits;
 
-pub mod bitstream_filter;
-
 use std::ffi::CStr;
 use std::str::from_utf8_unchecked;
 
